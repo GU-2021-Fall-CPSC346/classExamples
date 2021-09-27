@@ -16,11 +16,11 @@ void produce(int* shared) {
 	int curr_val = 0;
 	while(true) {
 		curr_val += 1;
-		cout << "Parent curr value: " << curr_val << endl;
+		cout << "Parent (" << getpid() << ") curr value: " << curr_val << endl;
 		*shared = curr_val;
         	int sleep_seconds = rand() % 3;
 		sleep(sleep_seconds);
-		cout << "Parent curr value: " << *shared << endl;
+		// cout << "Parent curr value: " << *shared << endl;
 	}
 
 }
@@ -29,9 +29,9 @@ void consume(int* shared) {
 	cout << shared << endl;
 	int consumer_curr_val = 0;
 	while(true) {
-		cout << "Child shared value: " << *shared << endl;
+		// cout << "Child shared value: " << *shared << endl;
 		if(consumer_curr_val != *shared) {
-			cout << "Consumer child value changing from " << consumer_curr_val << " -> " << *shared << endl;
+			cout << "Consumer child (" << getpid() << ") value changing from " << consumer_curr_val << " -> " << *shared << endl;
 			consumer_curr_val = *shared;
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -42,6 +42,7 @@ int main() {
     srand(time(NULL));
     cout << "Starting first program " << getpid() << endl;
 
+	// Read documentation on mmap - it's got many features
 	void *shared_memory = mmap(
 		/* addr= */ NULL,
         /* length= */ sizeof(int),
@@ -53,8 +54,12 @@ int main() {
 
 	int *shared = (int*)shared_memory;
 
+    pid_t c_pid = fork();	// Create a single child
 
-    pid_t c_pid = fork();
+	// Can make more consumer children processes
+	//for( int i = 0; i < 3; i++ ) {
+	//  if(c_pid > 0) { c_pid = fork(); }
+	//}
 
     if (c_pid == -1) {
         perror("fork");
