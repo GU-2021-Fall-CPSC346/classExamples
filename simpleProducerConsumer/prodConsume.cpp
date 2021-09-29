@@ -42,6 +42,9 @@ int main() {
     srand(time(NULL));
     cout << "Starting first program " << getpid() << endl;
 
+	cout << "STDOUT Number: " << STDOUT_FILENO << endl;
+	cout << "STDIN Number: " << STDIN_FILENO << endl;
+
 	// Read documentation on mmap - it's got many features
 	void *shared_memory = mmap(
 		/* addr= */ NULL,
